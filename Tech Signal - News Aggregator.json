@@ -1,0 +1,205 @@
+{
+  "name": "Tech Signal - News Aggregator",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "de466d2c-3d63-4431-9a83-af6d8b96de1a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "20e862c0-8065-4881-8eb0-89cf2d8811ae",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f3f83b24-b1e8-4bc7-a142-6f4442e51aae",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5ae10045-0e96-42b3-b13f-4518da4cfb64",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "AI",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "25fb3396-a5b6-43dc-af42-cdf3a5e598e8",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "agent",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "373d501d-00fd-450e-a8ca-593c28c72cd6",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e69b05b3-8994-4792-91d1-0fbfbe1bcba5",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "8af7338b-1c9b-4425-9235-e77180da7464",
+              "name": "summary",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "57a284b9-5204-4ecf-8682-4913347a8807",
+              "name": "pubDate",
+              "value": "={{ $json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "5bd4840d-40f4-4ce6-bb5d-21107c410dd5",
+              "name": "categories",
+              "value": "={{ $json.categories }}",
+              "type": "array"
+            },
+            {
+              "id": "49e2f849-8d79-442e-8a89-3cbd46731bf9",
+              "name": "source",
+              "value": "TechCrunch AI RSS",
+              "type": "string"
+            },
+            {
+              "id": "6aad6c22-2066-4d6d-9b15-3716c9c9d6b1",
+              "name": "link",
+              "value": "={{ $json.guid }}",
+              "type": "string"
+            },
+            {
+              "id": "0c24ed2a-08c9-4f8f-875b-6e98bcbc0eb6",
+              "name": "collected_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        896,
+        0
+      ],
+      "id": "fc340d7a-e39b-43d1-ae8f-6278466daa9a",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b6b2524c-3253-47fe-9a9f-feeb15cf09ab",
+  "meta": {
+    "instanceId": "c30fc4773ea5c5e42875addd8be9657e2226d033f6c3b95794cac7f0058bd86b"
+  },
+  "nodeGroups": [],
+  "id": "jiwIJkriBYJ5MuRl",
+  "tags": []
+}
